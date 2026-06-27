@@ -51,10 +51,30 @@ export default function BudgetsPage() {
 
   const onSubmit = async (data) => {
     try {
-      if (editing) { await budgetService.update(editing.budgetId, { monthlyLimit: data.monthlyLimit }); toast.success('Updated') }
-      else         { await budgetService.create(data); toast.success('Budget set') }
+      if (editing) {
+        // Backend PUT /api/budgets/{id} validates the full BudgetDto
+        // (@NotNull categoryId, month, year). Send the complete payload so
+        // validation passes — the service only applies monthlyLimit, so the
+        // budget's category/month/year stay unchanged.
+        await budgetService.update(editing.budgetId, {
+          categoryId:   editing.categoryId,
+          monthlyLimit: data.monthlyLimit,
+          month,
+          year,
+        })
+        toast.success('Updated')
+      } else {
+        await budgetService.create(data)
+        toast.success('Budget set')
+      }
       setModalOpen(false); load()
-    } catch (err) { toast.error(err.response?.data?.message || 'Something went wrong') }
+    } catch (err) {
+      const res = err.response?.data
+      const msg = res?.message
+        || (res?.fields && Object.values(res.fields)[0])
+        || 'Something went wrong'
+      toast.error(msg)
+    }
   }
 
   const onDelete = async () => {
