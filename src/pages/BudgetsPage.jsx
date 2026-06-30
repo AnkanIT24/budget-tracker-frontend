@@ -12,7 +12,8 @@ import ConfirmDialog from '../components/ui/ConfirmDialog'
 import EmptyState from '../components/ui/EmptyState'
 import { BudgetCardSkeleton } from '../components/ui/Skeleton'
 
-const now = new Date()
+// Returns the *current* date each time it's called (not frozen at page load)
+const today = () => new Date()
 const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
 const schema = z.object({
@@ -30,8 +31,8 @@ export default function BudgetsPage() {
   const [editing,      setEditing]      = useState(null)
   const [deleteTarget, setDeleteTarget] = useState(null)
   const [deleting,     setDeleting]     = useState(false)
-  const [month, setMonth] = useState(now.getMonth() + 1)
-  const [year,  setYear]  = useState(now.getFullYear())
+  const [month, setMonth] = useState(() => today().getMonth() + 1)
+  const [year,  setYear]  = useState(() => today().getFullYear())
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({ resolver: zodResolver(schema) })
 
@@ -51,30 +52,10 @@ export default function BudgetsPage() {
 
   const onSubmit = async (data) => {
     try {
-      if (editing) {
-        // Backend PUT /api/budgets/{id} validates the full BudgetDto
-        // (@NotNull categoryId, month, year). Send the complete payload so
-        // validation passes — the service only applies monthlyLimit, so the
-        // budget's category/month/year stay unchanged.
-        await budgetService.update(editing.budgetId, {
-          categoryId:   editing.categoryId,
-          monthlyLimit: data.monthlyLimit,
-          month,
-          year,
-        })
-        toast.success('Updated')
-      } else {
-        await budgetService.create(data)
-        toast.success('Budget set')
-      }
+      if (editing) { await budgetService.update(editing.budgetId, { monthlyLimit: data.monthlyLimit }); toast.success('Updated') }
+      else         { await budgetService.create(data); toast.success('Budget set') }
       setModalOpen(false); load()
-    } catch (err) {
-      const res = err.response?.data
-      const msg = res?.message
-        || (res?.fields && Object.values(res.fields)[0])
-        || 'Something went wrong'
-      toast.error(msg)
-    }
+    } catch (err) { toast.error(err.response?.data?.message || 'Something went wrong') }
   }
 
   const onDelete = async () => {

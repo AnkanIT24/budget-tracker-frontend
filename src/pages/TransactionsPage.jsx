@@ -12,7 +12,8 @@ import ConfirmDialog from '../components/ui/ConfirmDialog'
 import EmptyState from '../components/ui/EmptyState'
 import { RowSkeleton } from '../components/ui/Skeleton'
 
-const now = new Date()
+// Returns the *current* date each time it's called (not frozen at page load)
+const today = () => new Date()
 const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
 const schema = z.object({
@@ -32,11 +33,14 @@ export default function TransactionsPage() {
   const [editing,      setEditing]      = useState(null)
   const [deleteTarget, setDeleteTarget] = useState(null)
   const [deleting,     setDeleting]     = useState(false)
-  const [filters, setFilters] = useState({
-    month: now.getMonth() + 1,
-    year:  now.getFullYear(),
-    type: '',
-    categoryId: ''
+  const [filters, setFilters] = useState(() => {
+    const now = today()
+    return {
+      month: now.getMonth() + 1,
+      year:  now.getFullYear(),
+      type: '',
+      categoryId: ''
+    }
   })
 
   const {
@@ -53,7 +57,7 @@ export default function TransactionsPage() {
       categoryId: '',
       amount:     '',
       note:       '',
-      date:       now.toISOString().split('T')[0]
+      date:       today().toISOString().split('T')[0]
     }
   })
 
@@ -88,7 +92,7 @@ export default function TransactionsPage() {
       categoryId: '',
       amount:     '',
       note:       '',
-      date:       now.toISOString().split('T')[0]
+      date:       today().toISOString().split('T')[0]
     })
     setModalOpen(true)
   }

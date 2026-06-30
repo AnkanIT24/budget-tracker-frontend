@@ -7,8 +7,6 @@ import PageWrapper, { staggerContainer, staggerItem } from '../components/ui/Pag
 import { StatCardSkeleton, RowSkeleton, DashboardBudgetSkeleton } from '../components/ui/Skeleton'
 import { toast } from 'sonner'
 
-const now = new Date()
-
 function StatCard({ label, value, icon: Icon, color, delay, negative }) {
   return (
     <motion.div
@@ -86,6 +84,7 @@ export default function DashboardPage() {
   const [budgets, setBudgets] = useState([])
   const [recent,  setRecent]  = useState([])
   const [loading, setLoading] = useState(true)
+  const now   = new Date()           // read the current date when the page mounts
   const month = now.getMonth() + 1
   const year  = now.getFullYear()
 
