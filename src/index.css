@@ -1,0 +1,162 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------- Animations ---------- */
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ---------- Base ---------- */
+
+@layer base {
+  html {
+    min-width: 320px;
+    min-height: 100%;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-silver text-white font-sans antialiased;
+    min-width: 320px;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overscroll-behavior-y: none;
+  }
+
+  #root {
+    min-height: 100dvh;
+    width: 100%;
+  }
+
+  * {
+    @apply border-silver-border;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+  }
+
+  /* Prevent iOS input zoom */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+    max-width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    input,
+    select,
+    textarea {
+      font-size: 0.875rem !important;
+    }
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.5);
+    cursor: pointer;
+  }
+
+  /* Scrollbars */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-silver;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-silver-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500;
+  }
+
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ---------- Reusable Components ---------- */
+
+@layer components {
+  .btn-primary {
+    @apply bg-moss text-silver font-medium px-4 py-2.5 rounded-xl
+           active:scale-95 transition-all duration-150
+           disabled:opacity-50 disabled:cursor-not-allowed
+           select-none cursor-pointer;
+
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    min-height: 44px;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent text-gray-400 font-medium px-4 py-2.5 rounded-xl
+           hover:bg-silver-light hover:text-white active:scale-95
+           transition-all duration-150 border border-silver-border
+           select-none cursor-pointer;
+
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    min-height: 44px;
+  }
+
+  .btn-danger {
+    @apply bg-transparent text-red-400 font-medium px-4 py-2.5 rounded-xl
+           hover:bg-red-900/30 active:scale-95 transition-all duration-150
+           border border-red-900 select-none cursor-pointer;
+
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    min-height: 44px;
+  }
+
+  .input-field {
+    @apply w-full min-w-0 bg-silver-light border border-silver-border
+           rounded-xl px-3 py-3 text-white placeholder-gray-500
+           focus:outline-none focus:border-moss focus:ring-1
+           focus:ring-moss transition-colors duration-150
+           appearance-none;
+
+    min-height: 44px;
+  }
+
+  .card {
+    @apply min-w-0 bg-silver-light border border-silver-border
+           rounded-2xl p-4 md:p-5;
+  }
+
+  .badge-income {
+    @apply text-moss bg-moss-faint text-xs font-medium
+           px-2 py-0.5 rounded-full;
+  }
+
+  .badge-expense {
+    @apply text-red-400 bg-red-900/30 text-xs font-medium
+           px-2 py-0.5 rounded-full;
+  }
+}
